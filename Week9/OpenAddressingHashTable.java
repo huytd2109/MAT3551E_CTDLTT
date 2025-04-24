@@ -1,4 +1,3 @@
-package hashtable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,24 @@ public class OpenAddressingHashTable<Key, Value> implements HashTableInterface<K
     //Áp dụng phương pháp dò tuyến tính để xác định vị trí đặt Node mới
     @Override
     public void set(Key k, Value v) {
+          if (k == null) return;
         
+        int startIdx = getIndex(k);
+        int probeIdx = startIdx;
+        
+        for (int i = 0; i < size; i++) {
+            probeIdx = (startIdx + i) % size;
+            Node<Key, Value> curNode = table[probeIdx];
+            
+            if (curNode == null) {
+                table[probeIdx] = new Node<>(k, v);
+                return; 
+            }
+            else if (curNode.key.equals(k)) {
+                curNode.value = v;
+                return;
+            }
+        }
     }
     
     //Hàm thực hiện tìm và trả lại giá trị Value tương ứng với khóa k.
@@ -45,15 +61,33 @@ public class OpenAddressingHashTable<Key, Value> implements HashTableInterface<K
     //Áp dụng phương pháp dò tuyến tính để xác định vị trí của khóa k và trả lại giá trị value tương ứng
     @Override
     public Value get(Key k) {
-        
+        if (k == null) return null;
+        int count = 0;
+        int startIdx = getIndex(k);
+        int probeIdx = startIdx;
+        for (int i = 0; i < size; i++){
+            probeIdx = (startIdx + i) % size;
+            Node<Key, Value> curNode = table[probeIdx];
+            if(curNode == null){
+                return null;
+            }
+            else if(curNode.key.equals(k)){
+                return curNode.value;
+            }
+        }
         return null;
     }
 
     //Thêm tất cả các khóa có trong bảng vào 1 danh sách (ArrayList) và trả lại danh sách này
     @Override
     public Iterable<Key> keys() {
-        
-       return null;
+        List<Key> keyList = new ArrayList<>();
+        for (int i = 0; i < size; i++){
+            if (table[i] != null){
+                keyList.add(table[i].key);
+                }
+            }
+       return keyList;
     }
 
 
